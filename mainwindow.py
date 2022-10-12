@@ -1,3 +1,5 @@
+from automataValidator import AutomataValidator
+from automata import Automata
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
     QMetaObject, QObject, QPoint, QRect,
     QSize, QTime, QUrl, Qt)
@@ -5,14 +7,22 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QCursor, QFont, QFontDatabase, QGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
-    QTransform)
-from PySide6.QtOpenGLWidgets import QOpenGLWidget
+    QTransform,QPen)
 from PySide6.QtWidgets import (QApplication, QComboBox, QLabel, QMainWindow,
     QMenu, QMenuBar, QPushButton, QSizePolicy,
-    QSlider, QSpinBox, QStatusBar, QTextEdit,
+    QSlider, QSpinBox, QStatusBar, QLineEdit,
     QWidget)
+from customwidget import CustomWidget
+from PySide6.QtAxContainer import QAxWidget
+import sys
 
-class Ui_MainWindow(object):
+
+class MainWindow(QMainWindow):
+
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
@@ -39,16 +49,17 @@ class Ui_MainWindow(object):
         self.horizontalSlider.setMinimum(1)
         self.horizontalSlider.setMaximum(3)
         self.horizontalSlider.setOrientation(Qt.Horizontal)
-        self.pushButton = QPushButton(self.centralwidget)
-        self.pushButton.setObjectName(u"pushButton")
-        self.pushButton.setGeometry(QRect(20, 140, 131, 24))
+        self.validatePushButton = QPushButton(self.centralwidget)
+        self.validatePushButton.setObjectName(u"pushButton")
+        self.validatePushButton.setGeometry(QRect(20, 140, 131, 24))
         self.label_2 = QLabel(self.centralwidget)
         self.label_2.setObjectName(u"label_2")
-        self.label_2.setGeometry(QRect(20, 180, 131, 21))
-        self.openGLWidget = QOpenGLWidget(self.centralwidget)
-        self.openGLWidget.setObjectName(u"openGLWidget")
-        self.openGLWidget.setGeometry(QRect(170, 50, 711, 611))
-        self.textEdit = QTextEdit(self.centralwidget)
+        self.label_2.setGeometry(QRect(20, 180, 131, 21))	
+        self.widget = CustomWidget(self.centralwidget)	
+        self.widget.setObjectName(u"widget")	
+        self.widget.setGeometry(QRect(190, 60, 701, 561))	
+        self.widget.setAutoFillBackground(True)
+        self.textEdit = QLineEdit(self.centralwidget)
         self.textEdit.setObjectName(u"textEdit")
         self.textEdit.setGeometry(QRect(100, 10, 651, 21))
         self.label_3 = QLabel(self.centralwidget)
@@ -60,7 +71,7 @@ class Ui_MainWindow(object):
         self.comboBox.setObjectName(u"comboBox")
         self.comboBox.setGeometry(QRect(767, 10, 111, 22))
         self.comboBox.setEditable(True)
-        MainWindow.setCentralWidget(self.centralwidget)
+        MainWindow.setCentralWidget(self.widget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
         self.menubar.setGeometry(QRect(0, 0, 900, 22))
@@ -79,7 +90,25 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
 
         QMetaObject.connectSlotsByName(MainWindow)
+        self.addValidateButtonListener()
     # setupUi
+
+    # def paintEvent(self,event):
+    #     painter = QPainter(self)
+    #     painter.setPen(QPen(Qt.green,  8, Qt.SolidLine))
+    #     painter.setBrush(QBrush(Qt.red, Qt.SolidPattern))
+    #     painter.drawEllipse(200, 200, 70, 70)
+
+    def addValidateButtonListener(self):
+        self.validatePushButton.clicked.connect(self.validateAutomata)
+
+    def validateAutomata(self):
+        input = self.textEdit.text()
+        self.automataValidator = AutomataValidator(Automata(),list(input))
+        if self.automataValidator.isInputStringValidate():
+            self.label_2.setText(f'\nEl caracter "{input}" SI es Aceptado')
+        else:
+            self.label_2.setText(f'\nEl caracter "{input}" NO es Aceptado')
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
@@ -88,7 +117,7 @@ class Ui_MainWindow(object):
         self.actionAdicionar_Idioma.setText(QCoreApplication.translate("MainWindow", u"Adicionar Idioma", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:12pt; font-weight:700; font-style:italic;\">Palabra:</span></p></body></html>", None))
         self.spinBox.setPrefix("")
-        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Validar", None))
+        self.validatePushButton.setText(QCoreApplication.translate("MainWindow", u"Validar", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Estas onfire", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"Velocidad de ejecuci\u00f3n:", None))
         self.comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"Espa\u00f1ol", None))
@@ -96,3 +125,9 @@ class Ui_MainWindow(object):
 
         self.menuIdioma.setTitle(QCoreApplication.translate("MainWindow", u"Idioma", None))
     # retranslateUi
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec_())

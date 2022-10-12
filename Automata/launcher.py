@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QApplication, QMainWindow
 from mainwindow import Ui_MainWindow
 import sys
 
-class Launcher(QMainWindow, Ui_MainWindow):
+class Launcher( Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
