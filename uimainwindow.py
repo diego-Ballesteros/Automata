@@ -57,6 +57,12 @@ class MainWindow(QMainWindow):
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"Velocidad de ejecuci\u00f3n:", None))
         self.comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"Espa\u00f1ol", None))
         self.comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"Ingles", None))
+        self.label_4 = QLabel(self.mainWidget)
+        self.label_4.setObjectName(u"label_4")
+        self.label_4.setGeometry(QRect(20, 100, 131, 16))
+        self.label_4.setText(QCoreApplication.translate("MainWindow", u"(ab* + d + c)*", None))
+        self.label_4.setFont(font)
+
 
         #Iniciamos el widget contenedor del automata
         self.automataWidget = AutomataWidget(self.mainWidget)
